@@ -1071,6 +1071,456 @@ export const questions = [
     ],
     correctOption: 2,
   },
+  {
+    id: 71,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML Canvas elementi ne işe yarar?",
+    answer:
+      "Canvas elementi, JavaScript ile dinamik grafik, animasyon ve oyun geliştirmek için kullanılan bir çizim alanı sağlar.",
+    options: [
+      "Sadece statik resimler göstermek için kullanılır",
+      "JavaScript ile dinamik grafik ve animasyonlar oluşturmak için kullanılır",
+      "Yalnızca video oynatmak için kullanılır",
+      "CSS animasyonları için gerekli bir elementtir",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 72,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Houdini nedir ve ne amaçla kullanılır?",
+    answer:
+      "CSS Houdini, tarayıcının stil ve layout işlem süreçlerine erişim sağlayan düşük seviyeli bir API'dir.",
+    options: [
+      "Sadece CSS değişkenlerini yönetmek için kullanılır",
+      "Tarayıcının render süreçlerine erişim sağlayan düşük seviyeli bir API'dir",
+      "CSS dosyalarını optimize eden bir araçtır",
+      "Yalnızca animasyonlar için kullanılan bir kütüphanedir",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 73,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te WeakMap ve WeakSet'in kullanım amaçları nelerdir?",
+    answer:
+      "Memory leak'leri önlemek için zayıf referanslar kullanarak garbage collection'ı optimize ederler.",
+    options: [
+      "Normal Map ve Set'lerden daha hızlı çalışırlar",
+      "Memory leak'leri önlemek ve garbage collection'ı optimize etmek için kullanılırlar",
+      "Daha güvenli veri depolama sağlarlar",
+      "Senkron işlemleri yönetmek için kullanılırlar",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 74,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React Suspense ve Concurrent Mode nedir?",
+    answer:
+      "Kullanıcı deneyimini iyileştirmek için asenkron işlemleri ve render sürecini yönetmeye yarayan gelişmiş özelliklerdir.",
+    options: [
+      "Sadece hata yönetimi için kullanılan özelliklerdir",
+      "Asenkron işlemleri ve render sürecini yönetmeye yarayan özelliklerdir",
+      "React Router'ın alternatifidir",
+      "State yönetimi için kullanılan araçlardır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 75,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "Web Components nedir ve nasıl kullanılır?",
+    answer:
+      "Yeniden kullanılabilir, kapsüllenmiş ve özelleştirilebilir HTML elementleri oluşturmayı sağlayan bir teknolojidir.",
+    options: [
+      "Sadece CSS framework'üdür",
+      "Yeniden kullanılabilir ve kapsüllenmiş HTML elementleri oluşturma teknolojisidir",
+      "JavaScript paket yöneticisidir",
+      "Tarayıcı eklentisi geliştirme aracıdır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 76,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Paint API nedir ve ne için kullanılır?",
+    answer:
+      "Özel CSS özellikleri ve değerleri oluşturmak için programatik olarak grafik çizmeyi sağlayan bir API'dir.",
+    options: [
+      "Sadece renk değerlerini düzenlemek için kullanılır",
+      "Özel CSS özellikleri ve grafikleri programatik olarak oluşturmak için kullanılır",
+      "Resim dosyalarını optimize etmek için kullanılır",
+      "Font yükleme işlemlerini yönetir",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 77,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te Proxy ve Reflect API'leri ne işe yarar?",
+    answer:
+      "Nesneler üzerinde özel davranışlar tanımlamayı ve temel işlemleri yönetmeyi sağlayan API'lerdir.",
+    options: [
+      "Sadece ağ isteklerini yönetmek için kullanılır",
+      "Nesneler üzerinde özel davranışlar tanımlamak ve temel işlemleri yönetmek için kullanılır",
+      "Tarayıcı cache'ini yönetmek için kullanılır",
+      "Dosya sistemi işlemleri için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 78,
+    category: "react",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "React Server Components nedir?",
+    answer:
+      "Sunucu tarafında render edilen, istemci JavaScript bundle boyutunu azaltan ve performansı artıran bileşenlerdir.",
+    options: [
+      "Sadece API çağrıları için kullanılan bileşenlerdir",
+      "Sunucu tarafında render edilen ve performansı artıran bileşenlerdir",
+      "Local storage yönetimi için kullanılır",
+      "Sadece state yönetimi için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 79,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML dialog elementi ne işe yarar?",
+    answer:
+      "Native modal/dialog pencerelerini oluşturmak için kullanılan bir HTML elementidir.",
+    options: [
+      "Sadece metin gösterimi için kullanılır",
+      "Native modal/dialog pencereleri oluşturmak için kullanılır",
+      "Form validasyonu için kullanılır",
+      "Sadece bildirimler göstermek için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 80,
+    category: "css",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "CSS container queries nedir?",
+    answer:
+      "Elementlerin kendi container'larının boyutlarına göre stil değişikliği yapabilmesini sağlayan bir özelliktir.",
+    options: [
+      "Sadece viewport boyutlarına göre stil değişikliği yapar",
+      "Elementlerin container boyutlarına göre stil değişikliği yapmasını sağlar",
+      "Sadece grid layout için kullanılır",
+      "Renk değişimlerini kontrol eder",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 81,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript Decorators ne işe yarar?",
+    answer:
+      "Sınıf ve sınıf üyelerinin davranışlarını değiştirmek için kullanılan özel fonksiyonlardır.",
+    options: [
+      "Sadece stil tanımlamaları için kullanılır",
+      "Sınıf ve sınıf üyelerinin davranışlarını değiştirmek için kullanılır",
+      "Sadece hata ayıklama için kullanılır",
+      "Dosya yükleme işlemleri için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 82,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React Query (TanStack Query) ne amaçla kullanılır?",
+    answer:
+      "Sunucu state yönetimi, caching ve veri senkronizasyonu için kullanılan bir kütüphanedir.",
+    options: [
+      "Sadece local state yönetimi için kullanılır",
+      "Sunucu state yönetimi ve veri senkronizasyonu için kullanılır",
+      "Sadece routing işlemleri için kullanılır",
+      "CSS-in-JS çözümü olarak kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 83,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML Inert özelliği ne işe yarar?",
+    answer:
+      "Elementleri etkileşimden ve erişilebilirlik ağacından çıkarmak için kullanılan bir özelliktir.",
+    options: [
+      "Sadece görünürlüğü kontrol eder",
+      "Elementleri etkileşimden ve erişilebilirlik ağacından çıkarmak için kullanılır",
+      "Animasyonları kontrol eder",
+      "Sayfa yükleme hızını artırır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 84,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS @layer kuralı ne işe yarar?",
+    answer:
+      "CSS kaskad katmanları oluşturarak stil önceliklerini daha iyi yönetmeyi sağlar.",
+    options: [
+      "Sadece animasyonları gruplamak için kullanılır",
+      "CSS kaskad katmanları oluşturarak stil önceliklerini yönetir",
+      "Sadece medya sorgularını gruplar",
+      "JavaScript kodlarını CSS içinde çalıştırır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 85,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "Top-level await ne işe yarar?",
+    answer:
+      "Modül seviyesinde asenkron işlemleri async/await ile yönetmeyi sağlayan bir özelliktir.",
+    options: [
+      "Sadece fonksiyon içinde kullanılır",
+      "Modül seviyesinde asenkron işlemleri yönetmeyi sağlar",
+      "Senkron kod yazmak için kullanılır",
+      "Hata yakalama mekanizmasıdır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 86,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React'te Code Splitting nasıl yapılır?",
+    answer:
+      "Dynamic import ve React.lazy kullanılarak uygulama parçalara bölünür ve ihtiyaç halinde yüklenir.",
+    options: [
+      "Tüm kodu tek bir dosyada toplamakla",
+      "Dynamic import ve React.lazy kullanarak kod parçalarını bölmekle",
+      "Sadece CSS dosyalarını ayırmakla",
+      "Webpack kullanmadan manuel olarak",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 87,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te SharedArrayBuffer ne işe yarar?",
+    answer:
+      "Web Workers arasında bellek paylaşımı yaparak paralel işlem performansını artırır.",
+    options: [
+      "Sadece array'leri depolamak için kullanılır",
+      "Web Workers arasında bellek paylaşımı sağlar",
+      "DOM elementlerini saklar",
+      "Tarayıcı önbelleğini yönetir",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 88,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Scroll Snap Points nedir?",
+    answer:
+      "Kaydırma davranışını kontrol ederek düzgün ve kontrollü kaydırma deneyimi sağlar.",
+    options: [
+      "Sadece animasyon efektleridir",
+      "Kaydırma davranışını kontrol eden ve düzgün kaydırma sağlayan özelliktir",
+      "Sayfa yükleme hızını artırır",
+      "Sadece mobil cihazlarda çalışır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 89,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML'de preload ve prefetch arasındaki fark nedir?",
+    answer:
+      "Preload mevcut sayfa için kritik kaynakları, prefetch gelecekte kullanılabilecek kaynakları önceden yükler.",
+    options: [
+      "İkisi de aynı işi yapar",
+      "Preload mevcut sayfa için, prefetch gelecek sayfalar için kaynak yükler",
+      "Sadece görüntüler için kullanılır",
+      "Yalnızca script dosyaları için geçerlidir",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 90,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React'te Render Props pattern nedir?",
+    answer:
+      "Bileşenler arası kod paylaşımını sağlayan, render mantığını prop olarak geçen bir tasarım desenidir.",
+    options: [
+      "Sadece stil paylaşımı için kullanılır",
+      "Bileşenler arası kod paylaşımı sağlayan bir tasarım desenidir",
+      "Routing işlemleri için kullanılır",
+      "State yönetimi için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 91,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te Atomics API ne işe yarar?",
+    answer:
+      "SharedArrayBuffer üzerinde thread-safe operasyonlar gerçekleştirmeyi sağlar.",
+    options: [
+      "Sadece matematiksel işlemler için kullanılır",
+      "Thread-safe operasyonlar gerçekleştirmeyi sağlar",
+      "DOM manipülasyonu yapar",
+      "Veritabanı işlemleri için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 92,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Logical Properties nedir?",
+    answer:
+      "Yazı yönünden bağımsız olarak layout oluşturmayı sağlayan özelliklerdir.",
+    options: [
+      "Sadece renk değerleri için kullanılır",
+      "Yazı yönünden bağımsız layout oluşturmayı sağlar",
+      "JavaScript entegrasyonu için kullanılır",
+      "Sadece grid sisteminde çalışır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 93,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML'de picture elementi ne işe yarar?",
+    answer:
+      "Farklı ekran boyutları ve cihazlar için farklı görüntü kaynakları sunmayı sağlar.",
+    options: [
+      "Sadece video oynatmak için kullanılır",
+      "Farklı ekran boyutları için farklı görüntü kaynakları sunar",
+      "Sadece animasyon gösterir",
+      "Ses dosyalarını oynatır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 94,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React'te Compound Components pattern nedir?",
+    answer:
+      "İlişkili bileşenleri gruplamak ve daha esnek API'ler oluşturmak için kullanılan bir tasarım desenidir.",
+    options: [
+      "Sadece form elemanları için kullanılır",
+      "İlişkili bileşenleri gruplamak için kullanılan bir tasarım desenidir",
+      "Performans optimizasyonu yapar",
+      "Sadece stil tanımları için kullanılır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 95,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te Intl API ne işe yarar?",
+    answer:
+      "Dil, sayı, tarih ve saat biçimlendirmesi için uluslararasılaştırma desteği sağlar.",
+    options: [
+      "Sadece tarih işlemleri için kullanılır",
+      "Dil, sayı, tarih ve saat için uluslararasılaştırma desteği sağlar",
+      "Sadece para birimi dönüşümleri yapar",
+      "Metin çevirisi yapar",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 96,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Custom Properties (Variables) ne zaman kullanılmalıdır?",
+    answer:
+      "Tekrar eden değerleri merkezi yönetmek ve dinamik stil değişiklikleri yapmak için kullanılır.",
+    options: [
+      "Sadece renk değerleri için",
+      "Tekrar eden değerleri yönetmek ve dinamik stil değişiklikleri için",
+      "Yalnızca medya sorguları içinde",
+      "Sadece animasyonlar için",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 97,
+    category: "html",
+    difficulty: DIFFICULTY.MEDIUM,
+    question: "HTML'de lazy loading nasıl uygulanır?",
+    answer:
+      "loading='lazy' özniteliği kullanılarak görüntü ve iframe'lerin geç yüklenmesi sağlanır.",
+    options: [
+      "JavaScript ile manuel olarak",
+      "loading='lazy' özniteliği kullanarak",
+      "Sadece CSS ile yapılır",
+      "Otomatik olarak uygulanır",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 98,
+    category: "react",
+    difficulty: DIFFICULTY.HARD,
+    question: "React'te Custom Hooks'ların avantajları nelerdir?",
+    answer:
+      "Kod tekrarını önler, mantık paylaşımını kolaylaştırır ve bileşen karmaşıklığını azaltır.",
+    options: [
+      "Sadece performans iyileştirmesi sağlar",
+      "Kod tekrarını önler ve mantık paylaşımını kolaylaştırır",
+      "Yalnızca state yönetimi için kullanılır",
+      "Stil tanımlarını düzenler",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 99,
+    category: "javascript",
+    difficulty: DIFFICULTY.HARD,
+    question: "JavaScript'te Generators ve Iterators ne işe yarar?",
+    answer:
+      "Veri akışını kontrol etmeyi ve lazy evaluation yapmayı sağlayan özel fonksiyon türleridir.",
+    options: [
+      "Sadece döngü oluşturmak için kullanılır",
+      "Veri akışını kontrol etmek ve lazy evaluation yapmak için kullanılır",
+      "Sadece hata ayıklama için kullanılır",
+      "DOM manipülasyonu yapar",
+    ],
+    correctOption: 1,
+  },
+  {
+    id: 100,
+    category: "css",
+    difficulty: DIFFICULTY.HARD,
+    question: "CSS Subgrid özelliği ne işe yarar?",
+    answer:
+      "İç içe grid yapılarında alt öğelerin üst grid çizgilerine hizalanmasını sağlar.",
+    options: [
+      "Sadece flex layout için kullanılır",
+      "İç içe grid yapılarında hizalama sağlar",
+      "Sadece margin değerlerini ayarlar",
+      "Animasyon oluşturur",
+    ],
+    correctOption: 1,
+  },
 ];
 
 // Kategoriye göre soruları filtreleme
