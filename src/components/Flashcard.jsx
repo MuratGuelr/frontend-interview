@@ -61,6 +61,36 @@ const QuestionPreviewModal = ({
 }) => {
   if (!isOpen) return null;
 
+  // Zorluk seviyesi için renk ve etiket belirleme
+  const getDifficultyStyle = (difficulty) => {
+    switch (difficulty) {
+      case "easy":
+        return {
+          bg: "bg-green-500/20",
+          text: "text-green-300",
+          label: "Kolay",
+        };
+      case "medium":
+        return {
+          bg: "bg-yellow-500/20",
+          text: "text-yellow-300",
+          label: "Orta",
+        };
+      case "hard":
+        return {
+          bg: "bg-red-500/20",
+          text: "text-red-300",
+          label: "Zor",
+        };
+      default:
+        return {
+          bg: "bg-gray-500/20",
+          text: "text-gray-300",
+          label: "Belirsiz",
+        };
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -87,29 +117,40 @@ const QuestionPreviewModal = ({
         </div>
 
         <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
-          {questions.map((q, index) => (
-            <motion.button
-              key={index}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                onSelect(index);
-                onClose();
-              }}
-              className={`p-4 rounded-xl text-left transition-all ${
-                currentIndex === index
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-black/20 text-sm font-medium">
-                  {index + 1}
-                </span>
-                <p className="text-sm line-clamp-3">{q.question}</p>
-              </div>
-            </motion.button>
-          ))}
+          {questions.map((q, index) => {
+            const difficultyStyle = getDifficultyStyle(q.difficulty);
+
+            return (
+              <motion.button
+                key={index}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  onSelect(index);
+                  onClose();
+                }}
+                className={`p-4 rounded-xl text-left transition-all ${
+                  currentIndex === index
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                }`}
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-black/20 text-sm font-medium">
+                      {index + 1}
+                    </span>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyStyle.bg} ${difficultyStyle.text}`}
+                    >
+                      {difficultyStyle.label}
+                    </span>
+                  </div>
+                  <p className="text-sm line-clamp-3 mt-2">{q.question}</p>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       </motion.div>
     </motion.div>
@@ -129,6 +170,7 @@ export const Flashcard = ({
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [direction, setDirection] = useState(0);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -136,14 +178,16 @@ export const Flashcard = ({
 
   const handleNext = (e) => {
     e.stopPropagation();
-    onNext();
+    setDirection(1);
     setIsFlipped(false);
+    onNext();
   };
 
   const handlePrev = (e) => {
     e.stopPropagation();
-    onPrev();
+    setDirection(-1);
     setIsFlipped(false);
+    onPrev();
   };
 
   const handleSelectQuestion = (index) => {
@@ -175,103 +219,122 @@ export const Flashcard = ({
           </motion.button>
         </div>
 
-        <div className="h-96 mb-8 perspective-1000">
-          <motion.div
-            className="relative w-full h-full cursor-pointer"
-            onClick={handleFlip}
-            initial="front"
-            animate={isFlipped ? "back" : "front"}
-            variants={cardVariants}
-            whileHover="hover"
-            whileTap="tap"
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            {/* Front - Question */}
+        <div className="h-96 mb-8 perspective-1000 relative overflow-hidden">
+          <AnimatePresence mode="wait">
             <motion.div
-              className="absolute w-full h-full rounded-2xl p-8 flex flex-col"
-              style={{
-                backfaceVisibility: "hidden",
-                background:
-                  "linear-gradient(135deg, rgb(47, 63, 90) 0%, rgb(15, 23, 42) 100%)",
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+              key={currentIndex}
+              initial={{
+                opacity: 0,
+                x: direction * 100,
               }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              exit={{
+                opacity: 0,
+                x: direction * -100,
+              }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full h-full"
             >
-              {/* Zorluk seviyesi rozeti */}
-              <div className="absolute top-4 right-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    question.difficulty === "easy"
-                      ? "bg-green-500/20 text-green-300"
-                      : question.difficulty === "medium"
-                      ? "bg-yellow-500/20 text-yellow-300"
-                      : "bg-red-500/20 text-red-300"
-                  }`}
-                >
-                  {question.difficulty === "easy"
-                    ? "Kolay"
-                    : question.difficulty === "medium"
-                    ? "Orta"
-                    : "Zor"}
-                </span>
-              </div>
-
-              <div className="flex-1 flex items-center justify-center">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-2xl font-medium text-gray-100 text-center leading-relaxed"
-                >
-                  {question.question}
-                </motion.p>
-              </div>
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center justify-center gap-2 text-sm text-gray-400 mt-6"
+                className="relative w-full h-full cursor-pointer"
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{
+                  duration: 0.65,
+                  type: "spring",
+                  stiffness: 50,
+                  damping: 12,
+                }}
+                onClick={handleFlip}
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <FiRotateCw className="animate-spin-slow" />
-                <span>Cevabı görmek için tıklayın</span>
+                <div
+                  className="absolute w-full h-full rounded-2xl p-8 flex flex-col"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    background:
+                      "linear-gradient(135deg, rgb(47, 63, 90) 0%, rgb(15, 23, 42) 100%)",
+                  }}
+                >
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <div className="flex flex-col items-center gap-4 mb-6">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex items-center gap-3"
+                      >
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            question.difficulty === "easy"
+                              ? "bg-green-500/20 text-green-300"
+                              : question.difficulty === "medium"
+                              ? "bg-yellow-500/20 text-yellow-300"
+                              : "bg-red-500/20 text-red-300"
+                          }`}
+                        >
+                          {question.difficulty === "easy"
+                            ? "Kolay"
+                            : question.difficulty === "medium"
+                            ? "Orta"
+                            : "Zor"}
+                        </span>
+                      </motion.div>
+                    </div>
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-2xl font-medium text-gray-100 text-center leading-relaxed"
+                    >
+                      {question.question}
+                    </motion.p>
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex items-center justify-center gap-2 text-sm text-gray-400 mt-6"
+                  >
+                    <FiRotateCw className="animate-spin-slow" />
+                    <span>Cevabı görmek için tıklayın</span>
+                  </motion.div>
+                </div>
+
+                <div
+                  className="absolute w-full h-full rounded-2xl p-8 flex flex-col"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                    background:
+                      "linear-gradient(135deg, rgb(1, 109, 163) 0%, rgb(0, 59, 90) 100%)",
+                  }}
+                >
+                  <div className="flex-1 flex items-center justify-center">
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-2xl font-medium text-white text-center leading-relaxed"
+                    >
+                      {question.answer}
+                    </motion.p>
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex items-center justify-center gap-2 text-sm text-blue-100 mt-6"
+                  >
+                    <FiRotateCw className="animate-spin-slow" />
+                    <span>Soruyu görmek için tıklayın</span>
+                  </motion.div>
+                </div>
               </motion.div>
             </motion.div>
-
-            {/* Back - Answer */}
-            <motion.div
-              className="absolute w-full h-full rounded-2xl p-8 flex flex-col"
-              style={{
-                backfaceVisibility: "hidden",
-                transform: "rotateY(180deg)",
-                background:
-                  "linear-gradient(135deg, rgb(1, 109, 163) 0%, rgb(0, 59, 90) 100%)",
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              <div className="flex-1 flex items-center justify-center">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-2xl font-medium text-white text-center leading-relaxed"
-                >
-                  {question.answer}
-                </motion.p>
-              </div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center justify-center gap-2 text-sm text-blue-100 mt-6"
-              >
-                <FiRotateCw className="animate-spin-slow" />
-                <span>Soruyu görmek için tıklayın</span>
-              </motion.div>
-            </motion.div>
-          </motion.div>
+          </AnimatePresence>
         </div>
 
         <div className="flex items-center justify-between px-4">
