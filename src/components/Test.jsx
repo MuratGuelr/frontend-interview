@@ -539,14 +539,14 @@ export const Test = ({ onComplete, onCancel }) => {
             {currentQuestion.options.map((option, index) => (
               <motion.button
                 key={index}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleAnswerSelect(index)}
+                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                onClick={() => !isSubmitting && handleAnswerSelect(index)}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
                   selectedAnswer === index
                     ? `bg-gradient-to-br ${CategoryStyles[selectedCategory].gradient} text-white shadow-lg ${CategoryStyles[selectedCategory].shadow}`
                     : "bg-gray-50 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
-                }`}
+                } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 {option}
               </motion.button>
