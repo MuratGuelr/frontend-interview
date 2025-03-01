@@ -129,8 +129,12 @@ export const CategorySelector = () => {
         <motion.button
           key={id}
           variants={itemVariants}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{
+            scale: 1.03,
+            y: -3,
+            transition: { duration: 0.2 },
+          }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => setCurrentCategory(id)}
           className={`relative w-full sm:w-auto px-4 py-3 rounded-xl transition-all transform overflow-hidden ${
             currentCategory === id
