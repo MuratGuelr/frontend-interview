@@ -576,13 +576,37 @@ export const Dashboard = () => {
                                 style={{ backfaceVisibility: "hidden" }}
                               >
                                 <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                  <div className="bg-white/5 rounded-full px-6 py-2 mb-8 backdrop-blur-sm">
+                                  <div className="bg-white/5 rounded-full px-6 py-2 mb-8 backdrop-blur-sm flex items-center gap-3">
                                     <h3 className="text-lg font-medium text-gray-100">
                                       Soru{" "}
                                       {result.wrongAnswers[
                                         currentWrongAnswerIndex
                                       ].questionIndex + 1}
                                     </h3>
+                                    {/* Zorluk seviyesi rozeti */}
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                        result.wrongAnswers[
+                                          currentWrongAnswerIndex
+                                        ].difficulty === "easy"
+                                          ? "bg-green-500/20 text-green-300"
+                                          : result.wrongAnswers[
+                                              currentWrongAnswerIndex
+                                            ].difficulty === "medium"
+                                          ? "bg-yellow-500/20 text-yellow-300"
+                                          : "bg-red-500/20 text-red-300"
+                                      }`}
+                                    >
+                                      {result.wrongAnswers[
+                                        currentWrongAnswerIndex
+                                      ].difficulty === "easy"
+                                        ? "Kolay"
+                                        : result.wrongAnswers[
+                                            currentWrongAnswerIndex
+                                          ].difficulty === "medium"
+                                        ? "Orta"
+                                        : "Zor"}
+                                    </span>
                                   </div>
                                   <div className="bg-white/5 rounded-2xl p-6 mb-8 w-full backdrop-blur-sm">
                                     <p className="text-xl text-gray-100 leading-relaxed">
@@ -666,7 +690,20 @@ export const Dashboard = () => {
                               disabled={currentWrongAnswerIndex === 0}
                               className="p-3 rounded-xl bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-colors backdrop-blur-sm"
                             >
-                              <FiChevronDown className="text-xl" />
+                              <svg
+                                stroke="currentColor"
+                                fill="none"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-xl"
+                                height="1em"
+                                width="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                              </svg>
                             </motion.button>
                             <motion.button
                               whileHover={{ scale: 1.05 }}
@@ -680,7 +717,20 @@ export const Dashboard = () => {
                               }
                               className="p-3 rounded-xl bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-colors backdrop-blur-sm"
                             >
-                              <FiChevronUp className="text-xl" />
+                              <svg
+                                stroke="currentColor"
+                                fill="none"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-xl"
+                                height="1em"
+                                width="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                              </svg>
                             </motion.button>
                           </div>
                           <button

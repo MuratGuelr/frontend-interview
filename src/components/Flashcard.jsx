@@ -198,6 +198,25 @@ export const Flashcard = ({
                 border: "1px solid rgba(255, 255, 255, 0.1)",
               }}
             >
+              {/* Zorluk seviyesi rozeti */}
+              <div className="absolute top-4 right-4">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    question.difficulty === "easy"
+                      ? "bg-green-500/20 text-green-300"
+                      : question.difficulty === "medium"
+                      ? "bg-yellow-500/20 text-yellow-300"
+                      : "bg-red-500/20 text-red-300"
+                  }`}
+                >
+                  {question.difficulty === "easy"
+                    ? "Kolay"
+                    : question.difficulty === "medium"
+                    ? "Orta"
+                    : "Zor"}
+                </span>
+              </div>
+
               <div className="flex-1 flex items-center justify-center">
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}

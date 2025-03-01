@@ -5,6 +5,7 @@ import {
   CATEGORIES,
   CATEGORY_NAMES,
   getQuestionsByCategory,
+  DIFFICULTY,
 } from "../data/questions";
 import { updateProgress } from "../firebase/progress";
 import { useApp } from "../context/AppContext";
@@ -89,6 +90,7 @@ export const Test = ({ onComplete, onCancel }) => {
           question: currentQuestion.question,
           userAnswer: currentQuestion.options[selectedAnswer],
           correctAnswer: currentQuestion.options[currentQuestion.correctOption],
+          difficulty: currentQuestion.difficulty,
         },
       ]);
     }
@@ -252,6 +254,21 @@ export const Test = ({ onComplete, onCancel }) => {
         <div className="flex items-center gap-4">
           <div className="text-gray-600 dark:text-gray-300">
             Soru {currentQuestionIndex + 1}/{shuffledQuestions.length}
+          </div>
+          <div
+            className={`px-3 py-1 rounded-full text-sm font-medium ${
+              currentQuestion.difficulty === DIFFICULTY.EASY
+                ? "bg-green-500/20 text-green-400 dark:text-green-300"
+                : currentQuestion.difficulty === DIFFICULTY.MEDIUM
+                ? "bg-yellow-500/20 text-yellow-500 dark:text-yellow-300"
+                : "bg-red-500/20 text-red-400 dark:text-red-300"
+            }`}
+          >
+            {currentQuestion.difficulty === DIFFICULTY.EASY
+              ? "Kolay"
+              : currentQuestion.difficulty === DIFFICULTY.MEDIUM
+              ? "Orta"
+              : "Zor"}
           </div>
           <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
             <FiClock />
