@@ -12,7 +12,8 @@ import { Dashboard } from "./components/Dashboard";
 import { Leaderboard } from "./components/Leaderboard";
 import { db } from "./firebase/config";
 import { collection, addDoc } from "firebase/firestore";
-import { getQuestionsByCategory } from "./data/questions";
+import { getQuestionsByCategory, DIFFICULTY } from "./data/questions";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Soruları karıştırmak için yardımcı fonksiyon
 const shuffleArray = (array) => {
@@ -50,14 +51,28 @@ function App() {
   const [currentView, setCurrentView] = useState("main"); // "main" | "dashboard" | "leaderboard"
   const [isRandomMode, setIsRandomMode] = useState(false); // Rastgele mod için yeni state
 
-  // Soruları getir ve sadece flashcard modu için karıştır
+  // Soruları zorluk seviyesine göre sırala
   const questions = useMemo(() => {
-    const baseQuestions = getQuestionsByCategory(currentCategory);
-    if (isRandomMode && currentMode === "flashcards") {
-      // Sadece flashcard modunda ve rastgele mod aktifse karıştır
-      return shuffleArray(baseQuestions);
+    // Önce kategori bazlı soruları al
+    const categoryQuestions = getQuestionsByCategory(currentCategory);
+
+    // Rastgele mod aktif değilse zorluk seviyesine göre sırala
+    if (!isRandomMode || currentMode !== "flashcards") {
+      return categoryQuestions.sort((a, b) => {
+        // Zorluk seviyelerine sayısal değer ata
+        const difficultyValues = {
+          [DIFFICULTY.EASY]: 1,
+          [DIFFICULTY.MEDIUM]: 2,
+          [DIFFICULTY.HARD]: 3,
+        };
+
+        // Zorluk seviyelerine göre sırala
+        return difficultyValues[a.difficulty] - difficultyValues[b.difficulty];
+      });
     }
-    return baseQuestions;
+
+    // Rastgele mod aktifse karıştır
+    return shuffleArray(categoryQuestions);
   }, [currentCategory, currentMode, isRandomMode]);
 
   useEffect(() => {
@@ -123,23 +138,48 @@ function App() {
   const renderMainContent = () => {
     if (currentMode === "flashcards" && questions.length > 0) {
       return (
-        <Flashcard
-          question={questions[currentQuestionIndex]}
-          questions={questions}
-          currentIndex={currentQuestionIndex}
-          total={questions.length}
-          onNext={() =>
-            setCurrentQuestionIndex((prev) =>
-              Math.min(prev + 1, questions.length - 1)
-            )
-          }
-          onPrev={() =>
-            setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0))
-          }
-          onJumpTo={handleJumpToQuestion}
-          isRandomMode={isRandomMode}
-          onToggleRandomMode={() => setIsRandomMode((prev) => !prev)}
-        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentCategory}
+            initial={{
+              opacity: 0,
+              y: 20,
+              scale: 0.98,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -20,
+              scale: 0.98,
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeOut",
+            }}
+          >
+            <Flashcard
+              question={questions[currentQuestionIndex]}
+              questions={questions}
+              currentIndex={currentQuestionIndex}
+              total={questions.length}
+              onNext={() =>
+                setCurrentQuestionIndex((prev) =>
+                  Math.min(prev + 1, questions.length - 1)
+                )
+              }
+              onPrev={() =>
+                setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0))
+              }
+              onJumpTo={handleJumpToQuestion}
+              isRandomMode={isRandomMode}
+              onToggleRandomMode={() => setIsRandomMode((prev) => !prev)}
+            />
+          </motion.div>
+        </AnimatePresence>
       );
     }
 
