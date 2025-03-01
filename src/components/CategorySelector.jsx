@@ -44,27 +44,33 @@ export const CategorySelector = () => {
           Object.entries(userData.progress || {}).forEach(
             ([category, data]) => {
               if (data.results && data.results.length > 0) {
-                const scores = data.results.map(
+                const testResults = data.results.slice(-4); // Son 4 testi al
+                const scores = testResults.map(
                   (result) => (result.score / result.totalQuestions) * 100
                 );
 
-                // Her test %25 değerinde, 4 test = %100
+                // Her testin başarı yüzdesini hesapla ve toplamı 4'e böl
                 const completionPercentage = Math.min(
-                  data.results.length * 25,
+                  testResults.reduce(
+                    (sum, result) =>
+                      sum + (result.score / result.totalQuestions) * 25, // Her test maksimum %25 katkı sağlar
+                    0
+                  ),
                   100
                 );
 
                 // Son 4 testin ortalamasını al
-                const lastFourScores = scores.slice(-4);
                 const averageScore =
-                  lastFourScores.reduce((sum, score) => sum + score, 0) /
-                  lastFourScores.length;
+                  scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
                 categoryProgress[category] = {
                   score: averageScore,
                   testCount: data.results.length,
                   completion: completionPercentage,
                   lastScore: scores[scores.length - 1], // Son test skoru
+                  individualScores: testResults.map(
+                    (result) => (result.score / result.totalQuestions) * 100
+                  ), // Son 4 testin bireysel skorları
                 };
               } else {
                 categoryProgress[category] = {
@@ -72,6 +78,7 @@ export const CategorySelector = () => {
                   testCount: 0,
                   completion: 0,
                   lastScore: 0,
+                  individualScores: [],
                 };
               }
             }
@@ -87,35 +94,53 @@ export const CategorySelector = () => {
     fetchUserProgress();
   }, [user]);
 
-  const getProgressColor = (progress) => {
-    if (!progress) return "bg-gray-400/60";
+  const getProgressStatus = (progress) => {
+    if (!progress) return null;
 
-    const { score, completion } = progress;
-    if (completion < 100) {
-      // 4 test tamamlanmadıysa mavi tonlarında göster
-      return "bg-blue-400/60";
+    const { score, testCount, completion, lastScore, individualScores } =
+      progress;
+
+    if (testCount === 0) return "Henüz test yapılmadı";
+
+    if (testCount < 4) {
+      // 4'ten az test varsa, mevcut testlerin ortalamasını ve kalan test sayısını göster
+      const currentAverage =
+        individualScores.reduce((sum, score) => sum + score, 0) /
+        individualScores.length;
+      return `${completion.toFixed(
+        0
+      )}% (${testCount}/4) - Ort: %${currentAverage.toFixed(0)}`;
     }
 
-    // 4 test tamamlandıysa başarı durumuna göre renk ver
+    // 4 veya daha fazla test varsa son 4 testin ortalamasını göster
+    return `Başarı: %${score.toFixed(0)} (${testCount} Test)`;
+  };
+
+  const getProgressColor = (progress) => {
+    if (!progress) return "bg-gray-400/60";
+    if (progress.testCount === 0) return "bg-gray-400/60";
+
+    const { completion, score, individualScores } = progress;
+
+    // Eğer 4'ten az test yapıldıysa, mevcut testlerin ortalamasına göre renk ver
+    if (progress.testCount < 4) {
+      const currentAverage =
+        individualScores.reduce((sum, score) => sum + score, 0) /
+        individualScores.length;
+
+      if (currentAverage >= 90) return "bg-green-500/60";
+      if (currentAverage >= 70) return "bg-green-400/60";
+      if (currentAverage >= 50) return "bg-yellow-400/60";
+      if (currentAverage >= 30) return "bg-orange-400/60";
+      return "bg-red-400/60";
+    }
+
+    // 4 test tamamlandıysa
     if (score >= 90) return "bg-green-500/60";
     if (score >= 70) return "bg-green-400/60";
     if (score >= 50) return "bg-yellow-400/60";
     if (score >= 30) return "bg-orange-400/60";
     return "bg-red-400/60";
-  };
-
-  const getProgressStatus = (progress) => {
-    if (!progress) return null;
-
-    const { score, testCount, completion, lastScore } = progress;
-    if (completion < 100) {
-      // 4 test tamamlanmadıysa ilerleme ve son test skoru
-      return `${completion}% (${testCount}/4) ${
-        lastScore ? `- Son: %${lastScore.toFixed(0)}` : ""
-      }`;
-    }
-    // 4 test tamamlandıysa son 4 testin ortalaması
-    return `Başarı: %${score.toFixed(0)} (${testCount} Test)`;
   };
 
   return (
