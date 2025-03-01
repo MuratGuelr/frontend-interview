@@ -545,7 +545,7 @@ export const Dashboard = () => {
                     </div>
 
                     {/* Skor kartları */}
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-6 p">
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                       <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800">
                         <div className="flex items-center justify-between">
                           <span className="font-medium text-emerald-800 dark:text-emerald-200">
@@ -568,57 +568,12 @@ export const Dashboard = () => {
                       </div>
                     </div>
 
-                    {/* Flashcard görünümü */}
-                    <div
-                      className="relative"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {showAllQuestions ? (
-                        // Tüm Sorular Görünümü
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center justify-between mb-6">
-                            <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                              Yanlış Cevaplarınız
-                            </h4>
-                            <button
-                              onClick={() => setShowAllQuestions(false)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                            >
-                              <FiX className="text-xl text-gray-500 dark:text-gray-400" />
-                            </button>
-                          </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                            {result.wrongAnswers.map((wrong, idx) => {
-                              const difficultyStyle = getDifficultyStyle(
-                                wrong.difficulty
-                              );
-                              return (
-                                <motion.button
-                                  key={idx}
-                                  whileHover={{ scale: 1.05, y: -5 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  onClick={() => handleQuestionSelect(idx)}
-                                  className={`relative p-6 rounded-xl text-center transition-all duration-200 ${
-                                    currentWrongAnswerIndex === idx
-                                      ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                                      : "bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 hover:shadow-lg border border-gray-200 dark:border-gray-600"
-                                  }`}
-                                >
-                                  <span className="text-2xl font-bold">
-                                    {idx + 1}
-                                  </span>
-                                  <span
-                                    className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${difficultyStyle.bg} ${difficultyStyle.text}`}
-                                  >
-                                    {difficultyStyle.label}
-                                  </span>
-                                </motion.button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ) : (
-                        // Flashcard Görünümü - Ön yüz
+                    {/* Yanlış cevap varsa flashcard'ı göster */}
+                    {result.wrongAnswers && result.wrongAnswers.length > 0 ? (
+                      <div
+                        className="relative"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div className="h-[400px] perspective-1000">
                           <AnimatePresence mode="wait">
                             <motion.div
@@ -707,46 +662,19 @@ export const Dashboard = () => {
                             </motion.div>
                           </AnimatePresence>
                         </div>
-                      )}
-
-                      {/* Navigasyon butonları */}
-                      <div className="flex items-center justify-between mt-6">
-                        <div className="flex items-center gap-4">
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() =>
-                              handlePrevQuestion(result.wrongAnswers)
-                            }
-                            disabled={currentWrongAnswerIndex === 0}
-                            className="p-3 rounded-xl bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
-                          >
-                            <FiChevronLeft className="text-xl" />
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() =>
-                              handleNextQuestion(result.wrongAnswers)
-                            }
-                            disabled={
-                              currentWrongAnswerIndex ===
-                              result.wrongAnswers.length - 1
-                            }
-                            className="p-3 rounded-xl bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
-                          >
-                            <FiChevronRight className="text-xl" />
-                          </motion.button>
-                        </div>
-                        <button
-                          onClick={() => setShowAllQuestions(!showAllQuestions)}
-                          className="px-6 py-3 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
-                        >
-                          {currentWrongAnswerIndex + 1} /{" "}
-                          {result.wrongAnswers.length}
-                        </button>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 text-center border border-emerald-100 dark:border-emerald-800">
+                        <FiCheckCircle className="text-4xl text-emerald-500 mx-auto mb-3" />
+                        <h4 className="text-lg font-medium text-emerald-800 dark:text-emerald-200 mb-2">
+                          Mükemmel Performans!
+                        </h4>
+                        <p className="text-emerald-600 dark:text-emerald-300">
+                          Bu testte hiç yanlış cevabınız yok. Harika iş
+                          çıkardınız!
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}
