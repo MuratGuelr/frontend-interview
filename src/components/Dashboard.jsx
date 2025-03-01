@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiActivity,
@@ -9,6 +9,9 @@ import {
   FiChevronUp,
   FiX,
   FiCheckCircle,
+  FiRotateCw,
+  FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
 import { useApp } from "../context/AppContext";
 import { db, COLLECTIONS } from "../firebase/config";
@@ -24,6 +27,9 @@ export const Dashboard = () => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [showAllQuestions, setShowAllQuestions] = useState(false);
 
+  // Ref'leri tanımlayalım
+  const resultRefs = useRef({});
+
   // Test seçildiğinde wrong answer indexini sıfırla
   useEffect(() => {
     setCurrentWrongAnswerIndex(0);
@@ -38,9 +44,6 @@ export const Dashboard = () => {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
           const data = userDoc.data();
-          console.log("User Data:", data);
-          console.log("Progress:", data.progress);
-          console.log("Results:", data.results);
           setUserData(data);
         }
       } catch (error) {
@@ -188,14 +191,50 @@ export const Dashboard = () => {
 
   const handleTestClick = (index) => {
     if (selectedTestIndex === index) {
-      // Zaten açıksa kapat
       setSelectedTestIndex(null);
     } else {
-      // Yeni test seç
       setSelectedTestIndex(index);
       setCurrentWrongAnswerIndex(0);
       setIsFlipped(false);
       setShowAllQuestions(false);
+
+      // Scroll işlemi için setTimeout kullanarak animasyonun başlamasını bekleyelim
+      setTimeout(() => {
+        resultRefs.current[index]?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+    }
+  };
+
+  // Zorluk seviyesi stilleri için yardımcı fonksiyon
+  const getDifficultyStyle = (difficulty) => {
+    switch (difficulty) {
+      case "easy":
+        return {
+          bg: "bg-green-500/20",
+          text: "text-green-300",
+          label: "Kolay",
+        };
+      case "medium":
+        return {
+          bg: "bg-yellow-500/20",
+          text: "text-yellow-300",
+          label: "Orta",
+        };
+      case "hard":
+        return {
+          bg: "bg-red-500/20",
+          text: "text-red-300",
+          label: "Zor",
+        };
+      default:
+        return {
+          bg: "bg-gray-500/20",
+          text: "text-gray-300",
+          label: "Belirsiz",
+        };
     }
   };
 
@@ -437,13 +476,17 @@ export const Dashboard = () => {
         {allResults.slice(0, 5).map((result, index) => (
           <motion.div
             key={index}
+            ref={(el) => (resultRefs.current[index] = el)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden cursor-pointer"
-            onClick={() => handleTestClick(index)}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
           >
-            <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+            {/* Header kısmı - tıklanabilir alan */}
+            <div
+              className="p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer"
+              onClick={() => handleTestClick(index)}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-medium text-gray-800 dark:text-white">
@@ -484,270 +527,230 @@ export const Dashboard = () => {
                   )}
                 </div>
               </div>
+            </div>
 
-              <AnimatePresence>
-                {selectedTestIndex === index &&
-                  result.wrongAnswers &&
-                  result.wrongAnswers.length > 0 && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="mt-4 space-y-3"
-                    >
-                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                        Test Detayları
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div className="p-3 bg-green-50 dark:bg-green-900/10 rounded-lg">
-                          <span className="font-medium text-green-800 dark:text-green-200">
-                            Doğru Sayısı:
+            {/* Detaylar kısmı */}
+            <AnimatePresence>
+              {selectedTestIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-4 space-y-3 px-5 py-4">
+                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                      Test Detayları
+                    </div>
+
+                    {/* Skor kartları */}
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-6 p">
+                      <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-emerald-800 dark:text-emerald-200">
+                            Doğru Sayısı
                           </span>
-                          <span className="ml-2 text-green-600 dark:text-green-300">
+                          <span className="text-lg font-bold text-emerald-600 dark:text-emerald-300">
                             {result.score} / {result.totalQuestions}
                           </span>
                         </div>
-                        <div className="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg">
+                      </div>
+                      <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800">
+                        <div className="flex items-center justify-between">
                           <span className="font-medium text-red-800 dark:text-red-200">
-                            Yanlış Sayısı:
+                            Yanlış Sayısı
                           </span>
-                          <span className="ml-2 text-red-600 dark:text-red-300">
+                          <span className="text-lg font-bold text-red-600 dark:text-red-300">
                             {result.totalQuestions - result.score}
                           </span>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Yanlış Cevaplar - Flashcard Style */}
-                      <div
-                        className="relative"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {showAllQuestions ? (
-                          // Tüm Sorular Görünümü
-                          <div className="bg-white dark:bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm">
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="text-lg font-medium text-gray-800 dark:text-gray-100">
-                                Yanlış Cevaplar
-                              </h4>
-                              <button
-                                onClick={() => setShowAllQuestions(false)}
-                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                              >
-                                <FiX className="text-xl" />
-                              </button>
-                            </div>
-                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
-                              {result.wrongAnswers.map((wrong, idx) => (
+                    {/* Flashcard görünümü */}
+                    <div
+                      className="relative"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {showAllQuestions ? (
+                        // Tüm Sorular Görünümü
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                          <div className="flex items-center justify-between mb-6">
+                            <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                              Yanlış Cevaplarınız
+                            </h4>
+                            <button
+                              onClick={() => setShowAllQuestions(false)}
+                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                            >
+                              <FiX className="text-xl text-gray-500 dark:text-gray-400" />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            {result.wrongAnswers.map((wrong, idx) => {
+                              const difficultyStyle = getDifficultyStyle(
+                                wrong.difficulty
+                              );
+                              return (
                                 <motion.button
                                   key={idx}
                                   whileHover={{ scale: 1.05, y: -5 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={() => handleQuestionSelect(idx)}
-                                  className={`p-4 rounded-xl text-center shadow-sm transition-all duration-200 ${
+                                  className={`relative p-6 rounded-xl text-center transition-all duration-200 ${
                                     currentWrongAnswerIndex === idx
-                                      ? "bg-gradient-to-br from-blue-500/90 to-blue-600/90 text-white shadow-blue-500/20"
-                                      : "bg-gradient-to-br from-gray-50/90 to-gray-100/90 dark:from-gray-700/90 dark:to-gray-800/90 text-gray-700 dark:text-gray-300 hover:shadow-lg"
+                                      ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                                      : "bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 hover:shadow-lg border border-gray-200 dark:border-gray-600"
                                   }`}
                                 >
-                                  {idx + 1}
+                                  <span className="text-2xl font-bold">
+                                    {idx + 1}
+                                  </span>
+                                  <span
+                                    className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${difficultyStyle.bg} ${difficultyStyle.text}`}
+                                  >
+                                    {difficultyStyle.label}
+                                  </span>
                                 </motion.button>
-                              ))}
-                            </div>
+                              );
+                            })}
                           </div>
-                        ) : (
-                          // Flashcard Görünümü
-                          <div className="h-[400px] perspective-1000">
-                            <motion.div
-                              className="relative w-full h-full cursor-pointer group"
-                              initial={false}
-                              animate={{ rotateY: isFlipped ? 180 : 0 }}
-                              transition={{
-                                duration: 0.6,
-                                type: "spring",
-                                stiffness: 50,
-                              }}
-                              onClick={handleCardClick}
-                              style={{ transformStyle: "preserve-3d" }}
-                            >
-                              {/* Ön Yüz - Soru ve Kullanıcının Cevabı */}
-                              <div
-                                className="absolute w-full h-full rounded-2xl p-8 flex flex-col bg-gradient-to-br from-gray-700/95 to-gray-800/95 shadow-lg backdrop-blur-sm group-hover:shadow-gray-500/20 transition-shadow duration-300"
-                                style={{ backfaceVisibility: "hidden" }}
-                              >
-                                <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                  <div className="bg-white/5 rounded-full px-6 py-2 mb-8 backdrop-blur-sm flex items-center gap-3">
-                                    <h3 className="text-lg font-medium text-gray-100">
-                                      Soru{" "}
-                                      {result.wrongAnswers[
-                                        currentWrongAnswerIndex
-                                      ].questionIndex + 1}
-                                    </h3>
-                                    {/* Zorluk seviyesi rozeti */}
-                                    <span
-                                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                        result.wrongAnswers[
-                                          currentWrongAnswerIndex
-                                        ].difficulty === "easy"
-                                          ? "bg-green-500/20 text-green-300"
-                                          : result.wrongAnswers[
-                                              currentWrongAnswerIndex
-                                            ].difficulty === "medium"
-                                          ? "bg-yellow-500/20 text-yellow-300"
-                                          : "bg-red-500/20 text-red-300"
-                                      }`}
-                                    >
-                                      {result.wrongAnswers[
-                                        currentWrongAnswerIndex
-                                      ].difficulty === "easy"
-                                        ? "Kolay"
-                                        : result.wrongAnswers[
-                                            currentWrongAnswerIndex
-                                          ].difficulty === "medium"
-                                        ? "Orta"
-                                        : "Zor"}
-                                    </span>
-                                  </div>
-                                  <div className="bg-white/5 rounded-2xl p-6 mb-8 w-full backdrop-blur-sm">
-                                    <p className="text-xl text-gray-100 leading-relaxed">
-                                      {
-                                        result.wrongAnswers[
-                                          currentWrongAnswerIndex
-                                        ].question
-                                      }
-                                    </p>
-                                  </div>
-                                  <div className="bg-red-400/10 rounded-xl p-4 w-full backdrop-blur-sm">
-                                    <p className="text-sm text-red-100 mb-2">
-                                      Senin Cevabın:
-                                    </p>
-                                    <p className="text-lg font-medium text-red-200">
-                                      {
-                                        result.wrongAnswers[
-                                          currentWrongAnswerIndex
-                                        ].userAnswer
-                                      }
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center justify-center gap-2 text-gray-300/80 mt-4">
-                                  <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5">
-                                    <FiChevronUp className="text-lg" />
-                                  </span>
-                                  <span className="text-sm">
-                                    Doğru cevabı görmek için tıkla
-                                  </span>
-                                </div>
-                              </div>
-
-                              {/* Arka Yüz - Doğru Cevap */}
-                              <div
-                                className="absolute w-full h-full rounded-2xl p-8 flex flex-col bg-gradient-to-br from-emerald-700/95 to-emerald-800/95 shadow-lg backdrop-blur-sm group-hover:shadow-emerald-500/20 transition-shadow duration-300"
-                                style={{
-                                  backfaceVisibility: "hidden",
-                                  transform: "rotateY(180deg)",
-                                }}
-                              >
-                                <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                  <div className="bg-white/5 rounded-full px-6 py-2 mb-8 backdrop-blur-sm">
-                                    <h3 className="text-lg font-medium text-gray-100">
-                                      Doğru Cevap
-                                    </h3>
-                                  </div>
-                                  <div className="bg-white/5 rounded-2xl p-6 w-full backdrop-blur-sm">
-                                    <FiCheckCircle className="text-4xl text-emerald-300 mx-auto mb-4" />
-                                    <p className="text-2xl font-medium text-gray-100">
-                                      {
-                                        result.wrongAnswers[
-                                          currentWrongAnswerIndex
-                                        ].correctAnswer
-                                      }
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center justify-center gap-2 text-gray-300/80 mt-4">
-                                  <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5">
-                                    <FiChevronDown className="text-lg" />
-                                  </span>
-                                  <span className="text-sm">
-                                    Soruyu görmek için tıkla
-                                  </span>
-                                </div>
-                              </div>
-                            </motion.div>
-                          </div>
-                        )}
-
-                        {/* Navigasyon */}
-                        <div className="flex items-center justify-between mt-6">
-                          <div className="flex items-center gap-4">
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() =>
-                                handlePrevQuestion(result.wrongAnswers)
-                              }
-                              disabled={currentWrongAnswerIndex === 0}
-                              className="p-3 rounded-xl bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-colors backdrop-blur-sm"
-                            >
-                              <svg
-                                stroke="currentColor"
-                                fill="none"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="text-xl"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                              </svg>
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() =>
-                                handleNextQuestion(result.wrongAnswers)
-                              }
-                              disabled={
-                                currentWrongAnswerIndex ===
-                                result.wrongAnswers.length - 1
-                              }
-                              className="p-3 rounded-xl bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-colors backdrop-blur-sm"
-                            >
-                              <svg
-                                stroke="currentColor"
-                                fill="none"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="text-xl"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                              </svg>
-                            </motion.button>
-                          </div>
-                          <button
-                            onClick={() =>
-                              setShowAllQuestions(!showAllQuestions)
-                            }
-                            className="px-6 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 rounded-xl transition-colors backdrop-blur-sm"
-                          >
-                            {currentWrongAnswerIndex + 1} /{" "}
-                            {result.wrongAnswers.length}
-                          </button>
                         </div>
+                      ) : (
+                        // Flashcard Görünümü - Ön yüz
+                        <div className="h-[400px] perspective-1000">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={currentWrongAnswerIndex}
+                              initial={{ opacity: 0, x: 100 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -100 }}
+                              transition={{ duration: 0.3 }}
+                              className="relative w-full h-full"
+                            >
+                              <motion.div
+                                className="relative w-full h-full cursor-pointer"
+                                initial={false}
+                                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                                transition={{
+                                  duration: 0.6,
+                                  type: "spring",
+                                  stiffness: 40,
+                                  damping: 13,
+                                }}
+                                onClick={handleCardClick}
+                                style={{ transformStyle: "preserve-3d" }}
+                              >
+                                {/* Ön yüz */}
+                                <div
+                                  className="absolute w-full h-full rounded-2xl p-8 flex flex-col bg-gradient-to-br from-slate-700 to-slate-800 shadow-xl"
+                                  style={{ backfaceVisibility: "hidden" }}
+                                >
+                                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+                                    <div className="bg-white/10 rounded-full px-6 py-3">
+                                      <h3 className="text-xl font-semibold text-white">
+                                        Soru {currentWrongAnswerIndex + 1}
+                                      </h3>
+                                    </div>
+                                    <div className="bg-white/10 rounded-2xl p-6 w-full">
+                                      <p className="text-xl text-white leading-relaxed">
+                                        {
+                                          result.wrongAnswers[
+                                            currentWrongAnswerIndex
+                                          ].question
+                                        }
+                                      </p>
+                                    </div>
+                                    <div className="bg-red-500/20 rounded-xl p-6 w-full border border-red-500/30">
+                                      <p className="text-sm text-red-200 mb-2">
+                                        Senin Cevabın:
+                                      </p>
+                                      <p className="text-xl font-medium text-red-100">
+                                        {
+                                          result.wrongAnswers[
+                                            currentWrongAnswerIndex
+                                          ].userAnswer
+                                        }
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Arka yüz */}
+                                <div
+                                  className="absolute w-full h-full rounded-2xl p-8 flex flex-col bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-xl"
+                                  style={{
+                                    backfaceVisibility: "hidden",
+                                    transform: "rotateY(180deg)",
+                                  }}
+                                >
+                                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+                                    <div className="bg-white/10 rounded-full px-6 py-3">
+                                      <h3 className="text-xl font-semibold text-white">
+                                        Doğru Cevap
+                                      </h3>
+                                    </div>
+                                    <div className="bg-emerald-500/20 rounded-2xl p-6 w-full border border-emerald-400/30">
+                                      <FiCheckCircle className="text-5xl text-emerald-300 mx-auto mb-4" />
+                                      <p className="text-2xl font-medium text-white">
+                                        {
+                                          result.wrongAnswers[
+                                            currentWrongAnswerIndex
+                                          ].correctAnswer
+                                        }
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+                      )}
+
+                      {/* Navigasyon butonları */}
+                      <div className="flex items-center justify-between mt-6">
+                        <div className="flex items-center gap-4">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              handlePrevQuestion(result.wrongAnswers)
+                            }
+                            disabled={currentWrongAnswerIndex === 0}
+                            className="p-3 rounded-xl bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                          >
+                            <FiChevronLeft className="text-xl" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              handleNextQuestion(result.wrongAnswers)
+                            }
+                            disabled={
+                              currentWrongAnswerIndex ===
+                              result.wrongAnswers.length - 1
+                            }
+                            className="p-3 rounded-xl bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                          >
+                            <FiChevronRight className="text-xl" />
+                          </motion.button>
+                        </div>
+                        <button
+                          onClick={() => setShowAllQuestions(!showAllQuestions)}
+                          className="px-6 py-3 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                        >
+                          {currentWrongAnswerIndex + 1} /{" "}
+                          {result.wrongAnswers.length}
+                        </button>
                       </div>
-                    </motion.div>
-                  )}
-              </AnimatePresence>
-            </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         ))}
 
